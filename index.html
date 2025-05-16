@@ -56,7 +56,8 @@
         const { sensor_a, sensor_b, timestamp } = data[0];
         document.getElementById('sensorA').textContent = sensor_a.toFixed(2);
         document.getElementById('sensorB').textContent = sensor_b.toFixed(2);
-        document.getElementById('updatedAt').textContent = new Date(timestamp).toLocaleString();
+        document.getElementById('updatedAt').textContent = timestamp ? new Date(timestamp).toLocaleString() : "Unknown";
+
 
         if (sensor_b < 1.5) {
           document.getElementById('alertMsg').innerHTML = "⚠️ <span class='alert'>Trash bin full!</span>";
