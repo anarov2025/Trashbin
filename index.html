@@ -56,7 +56,9 @@
         const { sensor_a, sensor_b, timestamp } = data[0];
         document.getElementById('sensorA').textContent = sensor_a.toFixed(2);
         document.getElementById('sensorB').textContent = sensor_b.toFixed(2);
-        document.getElementById('updatedAt').textContent = timestamp ? new Date(timestamp).toLocaleString() : "Unknown";
+        document.getElementById('updatedAt').textContent = 
+          timestamp ? new Date(timestamp).toLocaleString() : "Not available";
+
 
 
         if (sensor_b < 1.5) {
