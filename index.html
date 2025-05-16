@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Trash Bin Monitor</title>
   <style>
     body {
@@ -34,7 +34,7 @@
   </div>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/+esm'
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/+esm';
 
     const supabaseUrl = 'https://mtactbuebtbyimrajvjv.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10YWN0YnVlYnRieWltcmFqdmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4ODY3MzQsImV4cCI6MjA2MjQ2MjczNH0.5HZodhN3IQ-l8pmGJpRVlg0xUdKMKJf3LPiReLxqpc0';
@@ -59,8 +59,6 @@
         document.getElementById('updatedAt').textContent = 
           timestamp ? new Date(timestamp).toLocaleString() : "Not available";
 
-
-
         if (sensor_b < 1.5) {
           document.getElementById('alertMsg').innerHTML = "⚠️ <span class='alert'>Trash bin full!</span>";
         } else {
@@ -71,8 +69,9 @@
 
     fetchLatestData();
     setInterval(fetchLatestData, 10000); // refresh every 10 sec
-    window.supabase = supabase;
 
+    // Expose supabase client globally for console access
+    window.supabase = supabase;
   </script>
 </body>
 </html>
