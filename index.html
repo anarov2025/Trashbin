@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Trash Bin Monitor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -22,23 +23,55 @@
       color: red;
       font-weight: bold;
     }
+    canvas {
+      max-width: 200px;
+      margin: 20px auto;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>Trash Bin Status</h2>
-    <p>Sensor A: <span id="sensorA">--</span> in</p>
-    <p>Sensor B: <span id="sensorB">--</span> in</p>
+    <canvas id="donutChart"></canvas>
     <p id="alertMsg"></p>
     <small>Updated: <span id="updatedAt">--</span></small>
   </div>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/+esm';
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/+esm'
 
     const supabaseUrl = 'https://mtactbuebtbyimrajvjv.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10YWN0YnVlYnRieWltcmFqdmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4ODY3MzQsImV4cCI6MjA2MjQ2MjczNH0.5HZodhN3IQ-l8pmGJpRVlg0xUdKMKJf3LPiReLxqpc0';
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const binDepth = 8; // inches
+
+    const ctx = document.getElementById('donutChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Full', 'Empty'],
+        datasets: [{
+          data: [0, 100],
+          backgroundColor: ['#ff6384', '#dddddd'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        cutout: '70%',
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: context => `${context.label}: ${context.parsed}%`
+            }
+          }
+        }
+      }
+    });
 
     async function fetchLatestData() {
       const { data, error } = await supabase
@@ -53,10 +86,14 @@
       }
 
       if (data && data.length > 0) {
-        const { sensor_a, sensor_b, time } = data[0];
-        document.getElementById('sensorA').textContent = sensor_a.toFixed(2);
-        document.getElementById('sensorB').textContent = sensor_b.toFixed(2);
-        document.getElementById('updatedAt').textContent = 
+        const { sensor_b, time } = data[0];
+
+        const fillPercent = Math.min(Math.max(((binDepth - sensor_b) / binDepth) * 100, 0), 100).toFixed(1);
+
+        chart.data.datasets[0].data = [fillPercent, 100 - fillPercent];
+        chart.update();
+
+        document.getElementById('updatedAt').textContent =
           time ? new Date(time).toLocaleString() : "Not available";
 
         if (sensor_b < 1.5) {
@@ -69,9 +106,6 @@
 
     fetchLatestData();
     setInterval(fetchLatestData, 10000); // refresh every 10 sec
-
-    // Expose supabase client globally for console access
-    window.supabase = supabase;
   </script>
 </body>
 </html>
