@@ -42,7 +42,7 @@
 
     async function fetchLatestData() {
       const { data, error } = await supabase
-        .from('bin_status')
+        .from('project')
         .select('*')
         .order('timestamp', { ascending: false })
         .limit(1);
