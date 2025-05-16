@@ -44,7 +44,7 @@
       const { data, error } = await supabase
         .from('sensor_data')
         .select('*')
-        .order('timestamp', { ascending: false })
+        .order('time', { ascending: false })
         .limit(1);
 
       if (error) {
@@ -53,11 +53,11 @@
       }
 
       if (data && data.length > 0) {
-        const { sensor_a, sensor_b, timestamp } = data[0];
+        const { sensor_a, sensor_b, time } = data[0];
         document.getElementById('sensorA').textContent = sensor_a.toFixed(2);
         document.getElementById('sensorB').textContent = sensor_b.toFixed(2);
         document.getElementById('updatedAt').textContent = 
-          timestamp ? new Date(timestamp).toLocaleString() : "Not available";
+          time ? new Date(time).toLocaleString() : "Not available";
 
         if (sensor_b < 1.5) {
           document.getElementById('alertMsg').innerHTML = "⚠️ <span class='alert'>Trash bin full!</span>";
